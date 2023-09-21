@@ -1,11 +1,14 @@
 import os
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash
+if os.path.exists("env.py"):
+    import env
 # 1st we imported our flask class, last flask with a capital F
 # we are importing render_template function from Flask to render html
 
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY")
 # we are creating an instance of this and storing it in a variable
 # called 'app' the 1st argument of the Flask class is the name
 # of our module . our package
@@ -37,8 +40,11 @@ def about_member(member_name):
     return render_template("member.html", member=member)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        flash("Thanks {}, we have received your message!".format(
+            request.form.get("name")))
     return render_template("contact.html", page_title="Contact")
 
 
